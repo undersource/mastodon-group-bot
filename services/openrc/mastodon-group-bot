@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+name=$RC_SVCNAME
+command="/usr/bin/$name"
+command_arg1="-config /etc/$name/config.json"
+command_arg2="-db /var/lib/$name/$name.db"
+command_arg3="-log /var/log/$name/$name.log"
+pidfile="/run/$name.pid"
+user="nobody"
+description="Mastodon group bot which reposts toots"
+start() {
+	ebegin "Starting $name"
+	start-stop-daemon -bm -S -u $user -p $pidfile -x $command -- $command_arg1 $command_arg2
+	eend $?
+}
+stop() {
+    ebegin "Stopping $name"
+    start-stop-daemon -K -p $pidfile
+    eend $?
+}
